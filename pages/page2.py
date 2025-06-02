@@ -1,63 +1,40 @@
+# page2.py
+
 import streamlit as st
-from openai import OpenAI
-import datetime
+import openai
 
-# OpenAI API Key
-try:
-    OPENAI_KEY = st.secrets["openai"]["api_key"]
-except KeyError:
-    OPENAI_KEY = ""
-    st.error("❌ OpenAI API 키가 설정되지 않았습니다.")
-    st.stop()
+# API 키 설정 (secrets.toml 또는 직접 입력)
+openai.api_key = st.secrets["openai"]["api_key"]
 
-client = OpenAI(api_key=OPENAI_KEY)
+# 월 목록
+months = [
+    "1월", "2월", "3월", "4월", "5월", "6월",
+    "7월", "8월", "9월", "10월", "11월", "12월"
+]
 
-st.title("🎂 생일로 알아보는 탄생화")
+st.title("🌸 월별 탄생화 설명 (AI 버전)")
 
-# 생일 입력
-birthdate = st.date_input("당신의 생일은 언제인가요?", datetime.date(2000, 1, 1))
+# 사용자 입력
+selected_month = st.selectbox("태어난 달을 선택하세요.", months)
 
-# 월-일 추출
-month = birthdate.month
-day = birthdate.day
+if st.button("🌼 탄생화 설명 보기"):
+    # 프롬프트 구성
+    prompt = f"""
+    너는 꽃 전문가야. 사용자가 '{selected_month}'을 선택했어.
+    이 달의 대표 탄생화 이름, 꽃말, 상징적 의미, 계절적 특징 등을 아름답고 감성적으로 3~5문장 이내로 설명해줘.
+    친근하고 따뜻한 말투로 알려줘.
+    """
 
-# 간단한 탄생화 사전 (예시)
-birth_flowers = {
-    (1, 1): "수선화",
-    (2, 14): "붉은 장미",
-    (3, 1): "프리지아",
-    (4, 10): "튤립",
-    (5, 5): "은방울꽃",
-    (6, 21): "해바라기",
-    (7, 7): "라벤더",
-    (8, 15): "글라디올러스",
-    (9, 9): "달리아",
-    (10, 31): "금잔화",
-    (11, 11): "국화",
-    (12, 25): "포인세티아",
-}
+    with st.spinner("🌷 AI가 꽃말을 전해주는 중..."):
+        response = openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": "당신은 친절한 꽃 전문가입니다."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.8
+        )
 
-flower_name = birth_flowers.get((month, day), "🌸 해당 날짜의 탄생화 정보가 없습니다.")
-
-# 결과 출력
-if st.button("탄생화 알아보기"):
-    if "없습니다" in flower_name:
-        st.warning(flower_name)
-    else:
-        st.success(f"🎉 {month}월 {day}일의 탄생화는 '{flower_name}'입니다!")
-
-        prompt = f"""
-        {month}월 {day}일은 탄생화로 '{flower_name}'이(가) 알려져 있습니다.
-        이 꽃의 특징과 의미, 꽃말을 감성적인 문장으로 설명해주세요.
-        """
-
-        with st.spinner("꽃말 설명 생성 중..."):
-            try:
-                response = client.chat.completions.create(
-                    model="gpt-4",
-                    messages=[{"role": "user", "content": prompt}]
-                )
-                explanation = response.choices[0].message.content
-                st.write(explanation)
-            except Exception as e:
-                st.error(f"❌ 오류 발생: {e}")
+        flower_description = response['choices'][0]['message']['content']
+        st.subheader(f"🌼 {selected_month}의 탄생화")
+        st.write(flower_description)
