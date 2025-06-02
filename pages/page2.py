@@ -3,8 +3,13 @@
 import streamlit as st
 import openai
 
-# API 키 설정 (secrets.toml 또는 직접 입력)
-openai.api_key = st.secrets["openai"]["api_key"]
+# OpenAI API Key 설정
+try:
+    OPENAI_KEY = st.secrets["openai"]["api_key"]
+except KeyError:
+    OPENAI_KEY = ""
+    st.error("❌ OpenAI API 키가 설정되지 않았습니다.")
+    st.stop()
 
 # 월 목록
 months = [
