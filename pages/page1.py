@@ -4,7 +4,7 @@ import datetime
 
 # OpenAI API Key 설정
 try:
-    OEPNAI_KEY = st.secrests["openai"]["api_key"]
+    OPENAI_KEY = st.secrests["openai"]["api_key"]
 except keyError:
     OPENAI_KEY = ""
 
