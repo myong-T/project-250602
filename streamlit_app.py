@@ -1,6 +1,32 @@
 import streamlit as st
 
-st.title("🎈 My new app")
-st.write(
-    "Let's start building! For help and inspiration, head over to [docs.streamlit.io](https://docs.streamlit.io/)."
-)
+st.set_page_config(page_title="오늘의 꽃", page_icon="🌸")
+
+st.title("🎈 Flower Shop")
+
+st.markdown("""
+## 🌼 당신을 위한 꽃 추천 서비스
+
+이 앱은 오늘의 **기분**, **날씨**, **상황** 등을 입력하면  
+OpenAI의 인공지능이 당신에게 어울리는 **오늘의 꽃**을 추천해드립니다.
+나의 탄생화도 함께 알아보아요.
+
+---
+
+### 📌 기능 안내
+
+#### 🌺 PAGE 1 : 오늘 나의 기분에 따라 꽃을 추천받아요
+- 이름, 날씨, 오늘의 상황, 현재 기분을 입력하면
+- AI가 당신에게 딱 어울리는 꽃을 추천해줘요.
+- 감성적인 문장으로 오늘을 위로해드립니다.
+
+#### 🌺 PAGE 2 : 나의 탄생화를 알아보아요
+- 나의 생일을 입력해보세요.
+- 365일 매일 매일의 탄생화는 무엇인지 알아볼 수 있어요.
+- 나의 탄생화에 대한 정보를 알아봅시다.
+
+---
+
+> 오늘 하루도 수고했어요.  
+> 당신의 마음을 꽃으로 위로해 드릴게요 🌷
+""")
