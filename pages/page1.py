@@ -1,5 +1,5 @@
 import streamlit as st
-import openai
+from openai import OpenAI
 import datetime
 
 # OpenAI API Key 설정
@@ -7,6 +7,11 @@ try:
     OPENAI_KEY = st.secrets["openai"]["api_key"]
 except KeyError:
     OPENAI_KEY = ""
+    st.error("❌ OpenAI API 키가 설정되지 않았습니다.")
+    st.stop()
+
+# OpenAI 클라이언트 생성 (v1.x 방식)
+client = OpenAI(api_key=OPENAI_KEY)
 
 st.title("🌸 오늘의 꽃 추천")
 
@@ -30,12 +35,17 @@ if st.button("🌺 오늘의 꽃 추천 받기"):
     위의 정보를 바탕으로 오늘의 꽃을 추천해주세요.
     꽃 이름과 그 꽃이 어울리는 이유를 부드럽고 감성적인 문장으로 설명해주세요.
     """
-    
+
     with st.spinner("꽃을 추천 중입니다... 🌷"):
-        response = openai.ChatCompletion.create(
-            model="gpt-4",
-            messages=[{"role": "user", "content": prompt}]
-        )
-        flower_recommendation = response.choices[0].message["content"]
-        st.success("🌼 오늘의 꽃은...")
-        st.write(flower_recommendation)
+        try:
+            response = client.chat.completions.create(
+                model="gpt-4",
+                messages=[
+                    {"role": "user", "content": prompt}
+                ]
+            )
+            flower_recommendation = response.choices[0].message.content
+            st.success("🌼 오늘의 꽃은...")
+            st.write(flower_recommendation)
+        except Exception as e:
+            st.error(f"❌ API 호출 오류: {e}")
