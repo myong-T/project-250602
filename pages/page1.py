@@ -3,7 +3,10 @@ import openai
 import datetime
 
 # OpenAI API Key 설정
-openai.api_key = st.secrets["openai_api_key"]
+try:
+    OEPNAI_KEY = st.secrests["openai"]["api_key"]
+except keyError:
+    OPENAI_KEY = ""
 
 st.title("🌸 오늘의 꽃 추천")
 
